@@ -4,7 +4,11 @@ import backoff
 import singer
 from botocore.exceptions import ClientError as BotoClientError
 from requests_oauthlib import OAuth1
-from oauthlib.oauth1 import SIGNATURE_RSA
+from oauthlib.oauth1 import (
+    SIGNATURE_RSA, SIGNATURE_TYPE_AUTH_HEADER
+)
+from pathlib import Path
+
 from xero.auth import PartnerCredentials
 
 LOGGER = singer.get_logger()
@@ -48,13 +52,16 @@ def download_from_s3(config):
 
 
 def build_oauth(config):
+    with open(str(Path.home()) + '/.ssh/privatekey.pem') as keyfile:
+        rsa_key = keyfile.read()
+
     return OAuth1(
-        config["consumer_key"],
-        client_secret=config["consumer_secret"],
-        resource_owner_key=config["oauth_token"],
-        resource_owner_secret=config["oauth_token_secret"],
-        rsa_key=config["rsa_key"],
+        config['consumer_key'],
+        client_secret=config["client_secret"],
+        resource_owner_key=config['consumer_key'],
+        rsa_key=rsa_key,
         signature_method=SIGNATURE_RSA,
+        signature_type=SIGNATURE_TYPE_AUTH_HEADER,
     )
 
 

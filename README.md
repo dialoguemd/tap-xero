@@ -36,9 +36,21 @@ This tap:
 - Outputs the schema for each resource
 - Incrementally pulls data based on the input state
 
-## Limitations
+## Running the tap
 
- - Only designed to work with Xero [Partner Applications](https://developer.xero.com/documentation/auth-and-limits/partner-applications), not Private Applications.
+- Create config file with the following variables:
+    - consumer_key
+    - client_secret
+    - start_date
+- Validate that the private key is located at the following path: `~/.ssh/privatekey.pem`
+
+Execute the following commands:
+
+```bash
+pip install -e .
+tap-xero -c config.json -d > properties.json
+tap-xero -c config.json -p properties.json >> output.json
+```
 
 ---
 

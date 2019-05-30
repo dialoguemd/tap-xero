@@ -175,42 +175,42 @@ all_streams = [
     # parameters
     PaginatedStream("bank_transactions", ["BankTransactionID"]),
     PaginatedStream("contacts", ["ContactID"], format_fn=transform.format_contacts),
-    PaginatedStream("credit_notes", ["CreditNoteID"], format_fn=transform.format_credit_notes),
+    # PaginatedStream("credit_notes", ["CreditNoteID"], format_fn=transform.format_credit_notes),
     PaginatedStream("invoices", ["InvoiceID"]),
     PaginatedStream("manual_journals", ["ManualJournalID"]),
-    PaginatedStream("overpayments", ["OverpaymentID"], format_fn=transform.format_over_pre_payments),
-    PaginatedStream("prepayments", ["PrepaymentID"], format_fn=transform.format_over_pre_payments),
-    PaginatedStream("purchase_orders", ["PurchaseOrderID"]),
+    # PaginatedStream("overpayments", ["OverpaymentID"], format_fn=transform.format_over_pre_payments),
+    # PaginatedStream("prepayments", ["PrepaymentID"], format_fn=transform.format_over_pre_payments),
+    # PaginatedStream("purchase_orders", ["PurchaseOrderID"]),
 
     # JOURNALS STREAM
     # This endpoint is paginated, but in its own special snowflake way.
-    Journals("journals", ["JournalID"], bookmark_key="JournalNumber"),
+    # Journals("journals", ["JournalID"], bookmark_key="JournalNumber"),
 
     # NON-PAGINATED STREAMS
     # These endpoints do not support pagination, but do support the Modified At
     # header.
-    BookmarkedStream("accounts", ["AccountID"]),
-    BookmarkedStream("bank_transfers", ["BankTransferID"], bookmark_key="CreatedDateUTC"),
-    BookmarkedStream("employees", ["EmployeeID"]),
-    BookmarkedStream("expense_claims", ["ExpenseClaimID"]),
-    BookmarkedStream("items", ["ItemID"]),
+    Everything("accounts", ["AccountID"]),
+    # BookmarkedStream("bank_transfers", ["BankTransferID"], bookmark_key="CreatedDateUTC"),
+    # BookmarkedStream("employees", ["EmployeeID"]),
+    # BookmarkedStream("expense_claims", ["ExpenseClaimID"]),
+    # BookmarkedStream("items", ["ItemID"]),
     BookmarkedStream("payments", ["PaymentID"], format_fn=transform.format_payments),
-    BookmarkedStream("receipts", ["ReceiptID"], format_fn=transform.format_receipts),
-    BookmarkedStream("users", ["UserID"], format_fn=transform.format_users),
+    # BookmarkedStream("receipts", ["ReceiptID"], format_fn=transform.format_receipts),
+    # BookmarkedStream("users", ["UserID"], format_fn=transform.format_users),
 
-    # PULL EVERYTHING STREAMS
-    # These endpoints do not support the Modified After header (or paging), so
-    # we must pull all the data each time.
-    Everything("branding_themes", ["BrandingThemeID"]),
-    Everything("contact_groups", ["ContactGroupID"], format_fn=transform.format_contact_groups),
-    Everything("currencies", ["Code"]),
-    Everything("organisations", ["OrganisationID"]),
-    Everything("repeating_invoices", ["RepeatingInvoiceID"]),
-    Everything("tax_rates", ["TaxType"]),
-    Everything("tracking_categories", ["TrackingCategoryID"]),
+    # # PULL EVERYTHING STREAMS
+    # # These endpoints do not support the Modified After header (or paging), so
+    # # we must pull all the data each time.
+    # Everything("branding_themes", ["BrandingThemeID"]),
+    # Everything("contact_groups", ["ContactGroupID"], format_fn=transform.format_contact_groups),
+    # Everything("currencies", ["Code"]),
+    # Everything("organisations", ["OrganisationID"]),
+    # Everything("repeating_invoices", ["RepeatingInvoiceID"]),
+    # Everything("tax_rates", ["TaxType"]),
+    # Everything("tracking_categories", ["TrackingCategoryID"]),
 
-    # LINKED TRANSACTIONS STREAM
-    # This endpoint is not paginated, but can do some manual filtering
-    LinkedTransactions("linked_transactions", ["LinkedTransactionID"], bookmark_key="UpdatedDateUTC"),
+    # # LINKED TRANSACTIONS STREAM
+    # # This endpoint is not paginated, but can do some manual filtering
+    # LinkedTransactions("linked_transactions", ["LinkedTransactionID"], bookmark_key="UpdatedDateUTC"),
 ]
 all_stream_ids = [s.tap_stream_id for s in all_streams]

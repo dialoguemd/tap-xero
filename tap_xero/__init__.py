@@ -12,8 +12,7 @@ from .http import XeroClient
 from .context import Context
 
 CREDENTIALS_KEYS = ["consumer_key",
-                    "consumer_secret",
-                    "rsa_key"]
+                    "client_secret"]
 REQUIRED_CONFIG_KEYS = ["start_date"] + CREDENTIALS_KEYS
 
 LOGGER = singer.get_logger()
@@ -130,8 +129,9 @@ def sync(ctx):
     currently_syncing = ctx.state.get("currently_syncing")
     start_idx = streams_.all_stream_ids.index(currently_syncing) \
         if currently_syncing else 0
-    stream_ids_to_sync = [cs.tap_stream_id for cs in ctx.catalog.streams
-                          if cs.is_selected()]
+
+    stream_ids_to_sync = [cs.tap_stream_id for cs in ctx.catalog.streams]
+
     streams = [s for s in streams_.all_streams[start_idx:]
                if s.tap_stream_id in stream_ids_to_sync]
     for stream in streams:
