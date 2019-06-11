@@ -175,7 +175,7 @@ all_streams = [
     # parameters
     PaginatedStream("bank_transactions", ["BankTransactionID"]),
     PaginatedStream("contacts", ["ContactID"], format_fn=transform.format_contacts),
-    # PaginatedStream("credit_notes", ["CreditNoteID"], format_fn=transform.format_credit_notes),
+    PaginatedStream("credit_notes", ["CreditNoteID"], format_fn=transform.format_credit_notes),
     PaginatedStream("invoices", ["InvoiceID"]),
     PaginatedStream("manual_journals", ["ManualJournalID"]),
     # PaginatedStream("overpayments", ["OverpaymentID"], format_fn=transform.format_over_pre_payments),
