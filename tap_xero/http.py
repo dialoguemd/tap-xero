@@ -46,14 +46,17 @@ class XeroClient(object):
             headers["User-Agent"] = self.user_agent
         if since:
             headers["If-Modified-Since"] = since
-        request = requests.Request("GET", url, auth=self.oauth,
-                                   headers=headers, params=params)
+        request = requests.Request(
+            "GET", url, auth=self.oauth, headers=headers, params=params
+        )
         response = self.session.send(request.prepare())
         if response.status_code == 401:
             raise XeroUnauthorized(response)
         response.raise_for_status()
-        response_meta = json.loads(response.text,
-                                   object_hook=_json_load_object_hook,
-                                   parse_float=decimal.Decimal)
+        response_meta = json.loads(
+            response.text,
+            object_hook=_json_load_object_hook,
+            parse_float=decimal.Decimal,
+        )
         response_body = response_meta.pop(xero_resource_name)
         return response_body

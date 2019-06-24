@@ -8,9 +8,9 @@ with open("config.json") as f:
 
 
 def new_token():
-    credentials = PartnerCredentials(config["consumer_key"],
-                                     config["consumer_secret"],
-                                     config["rsa_key"])
+    credentials = PartnerCredentials(
+        config["consumer_key"], config["consumer_secret"], config["rsa_key"]
+    )
     print(credentials.url)
     verifier = input("verifier: ")
     credentials.verify(verifier)
@@ -29,6 +29,7 @@ def refreshed_token():
     )
     credentials.refresh()
     return credentials
+
 
 if "oauth_token" not in config:
     credentials = new_token()

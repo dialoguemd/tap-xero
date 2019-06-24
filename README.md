@@ -42,7 +42,14 @@ This tap:
     - consumer_key
     - client_secret
     - start_date
-- Validate that the private key is located at the following path: `~/.ssh/privatekey.pem`
+```
+{
+  "consumer_key": "REPLACE",
+  "client_secret": "REPLACE",
+  "start_date": "2016-01-01"
+}
+```
+- Validate that the private key is located at the following path: `~/.ssh/privatekey.pem`. The key is generated for the Xero application using Xero's developers portal. More details: https://developer.xero.com/documentation/auth-and-limits/private-applications
 
 Execute the following commands:
 
