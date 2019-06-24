@@ -46,6 +46,7 @@
     },
     "LineItemID": {
       "type": [
+        "null",
         "string"
       ]
     },

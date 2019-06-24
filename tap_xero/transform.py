@@ -37,6 +37,7 @@ def strip_warnings(records):
     for record in records:
         record.pop("Warnings", None)
 
+
 format_users = strip_warnings
 
 

@@ -11,9 +11,7 @@ from . import credentials
 from .http import XeroClient
 from .context import Context
 
-CREDENTIALS_KEYS = ["consumer_key",
-                    "consumer_secret",
-                    "rsa_key"]
+CREDENTIALS_KEYS = ["consumer_key", "client_secret"]
 REQUIRED_CONFIG_KEYS = ["start_date"] + CREDENTIALS_KEYS
 
 LOGGER = singer.get_logger()
@@ -45,20 +43,29 @@ def load_schema(tap_stream_id):
         singer.resolve_schema_references(schema, refs)
     return schema
 
+
 def load_metadata(stream, schema):
     mdata = metadata.new()
 
-    mdata = metadata.write(mdata, (), 'table-key-properties', stream.pk_fields)
-    mdata = metadata.write(mdata, (), 'forced-replication-method', stream.replication_method)
+    mdata = metadata.write(mdata, (), "table-key-properties", stream.pk_fields)
+    mdata = metadata.write(
+        mdata, (), "forced-replication-method", stream.replication_method
+    )
 
     if stream.bookmark_key:
-        mdata = metadata.write(mdata, (), 'valid-replication-keys', [stream.bookmark_key])
+        mdata = metadata.write(
+            mdata, (), "valid-replication-keys", [stream.bookmark_key]
+        )
 
-    for field_name in schema['properties'].keys():
+    for field_name in schema["properties"].keys():
         if field_name in stream.pk_fields or field_name == stream.bookmark_key:
-            mdata = metadata.write(mdata, ('properties', field_name), 'inclusion', 'automatic')
+            mdata = metadata.write(
+                mdata, ("properties", field_name), "inclusion", "automatic"
+            )
         else:
-            mdata = metadata.write(mdata, ('properties', field_name), 'inclusion', 'available')
+            mdata = metadata.write(
+                mdata, ("properties", field_name), "inclusion", "available"
+            )
 
     return metadata.to_list(mdata)
 
@@ -87,7 +94,9 @@ def init_credentials(config):
             if creds:
                 config.update(creds)
                 try:
-                    LOGGER.info("Config credentials failed.  Attempting refresh with s3 credentials.")
+                    LOGGER.info(
+                        "Config credentials failed.  Attempting refresh with s3 credentials."
+                    )
                     refresh_results = credentials.refresh(config)
                     config.update(refresh_results)
                     ensure_credentials_are_valid(config)
@@ -98,6 +107,7 @@ def init_credentials(config):
 
     return config
 
+
 def discover(config):
     config = init_credentials(config)
     catalog = Catalog([])
@@ -106,21 +116,21 @@ def discover(config):
         mdata = load_metadata(stream, schema_dict)
 
         schema = Schema.from_dict(schema_dict)
-        catalog.streams.append(CatalogEntry(
-            stream=stream.tap_stream_id,
-            tap_stream_id=stream.tap_stream_id,
-            key_properties=stream.pk_fields,
-            schema=schema,
-            metadata=mdata
-        ))
+        catalog.streams.append(
+            CatalogEntry(
+                stream=stream.tap_stream_id,
+                tap_stream_id=stream.tap_stream_id,
+                key_properties=stream.pk_fields,
+                schema=schema,
+                metadata=mdata,
+            )
+        )
     return catalog
 
 
 def load_and_write_schema(stream):
     singer.write_schema(
-        stream.tap_stream_id,
-        load_schema(stream.tap_stream_id),
-        stream.pk_fields,
+        stream.tap_stream_id, load_schema(stream.tap_stream_id), stream.pk_fields
     )
 
 
@@ -128,12 +138,17 @@ def sync(ctx):
     new_credentials = init_credentials(ctx.config)
     ctx.client.update_credentials(new_credentials)
     currently_syncing = ctx.state.get("currently_syncing")
-    start_idx = streams_.all_stream_ids.index(currently_syncing) \
-        if currently_syncing else 0
-    stream_ids_to_sync = [cs.tap_stream_id for cs in ctx.catalog.streams
-                          if cs.is_selected()]
-    streams = [s for s in streams_.all_streams[start_idx:]
-               if s.tap_stream_id in stream_ids_to_sync]
+    start_idx = (
+        streams_.all_stream_ids.index(currently_syncing) if currently_syncing else 0
+    )
+
+    stream_ids_to_sync = [cs.tap_stream_id for cs in ctx.catalog.streams]
+
+    streams = [
+        s
+        for s in streams_.all_streams[start_idx:]
+        if s.tap_stream_id in stream_ids_to_sync
+    ]
     for stream in streams:
         ctx.state["currently_syncing"] = stream.tap_stream_id
         ctx.write_state()
@@ -143,16 +158,19 @@ def sync(ctx):
     ctx.write_state()
 
 
-
 def main_impl():
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
     if args.discover:
         discover(args.config).dump()
         print()
     else:
-        catalog = Catalog.from_dict(args.properties) \
-            if args.properties else discover(args.config)
+        catalog = (
+            Catalog.from_dict(args.properties)
+            if args.properties
+            else discover(args.config)
+        )
         sync(Context(args.config, args.state, catalog))
+
 
 def main():
     try:

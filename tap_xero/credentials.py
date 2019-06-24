@@ -4,7 +4,9 @@ import backoff
 import singer
 from botocore.exceptions import ClientError as BotoClientError
 from requests_oauthlib import OAuth1
-from oauthlib.oauth1 import SIGNATURE_RSA
+from oauthlib.oauth1 import SIGNATURE_RSA, SIGNATURE_TYPE_AUTH_HEADER
+from pathlib import Path
+
 from xero.auth import PartnerCredentials
 
 LOGGER = singer.get_logger()
@@ -34,7 +36,7 @@ def download_from_s3(config):
     try:
         response = _s3_obj(config).get()
     except BotoClientError as ex:
-        if ex.response['Error']['Code'] == "NoSuchKey":
+        if ex.response["Error"]["Code"] == "NoSuchKey":
             return None
         else:
             raise ex
@@ -42,33 +44,35 @@ def download_from_s3(config):
     body = json.loads(response["Body"].read().decode("utf-8"))
     missing_keys = [k for k in REFRESHABLE_KEYS if k not in body]
     if missing_keys:
-        raise CredentialsException("Keys missing from S3 file: " +
-                                   str(missing_keys))
+        raise CredentialsException("Keys missing from S3 file: " + str(missing_keys))
     return body
 
 
 def build_oauth(config):
+    with open(str(Path.home()) + "/.ssh/privatekey.pem") as keyfile:
+        rsa_key = keyfile.read()
+
     return OAuth1(
         config["consumer_key"],
-        client_secret=config["consumer_secret"],
-        resource_owner_key=config["oauth_token"],
-        resource_owner_secret=config["oauth_token_secret"],
-        rsa_key=config["rsa_key"],
+        client_secret=config["client_secret"],
+        resource_owner_key=config["consumer_key"],
+        rsa_key=rsa_key,
         signature_method=SIGNATURE_RSA,
+        signature_type=SIGNATURE_TYPE_AUTH_HEADER,
     )
 
 
 def _on_giveup(details):
     _, body = details["args"]
-    LOGGER.error("Credentials could not be saved to S3. " +
-                 "You will need to re-authorize the application.")
+    LOGGER.error(
+        "Credentials could not be saved to S3. "
+        + "You will need to re-authorize the application."
+    )
 
 
-@backoff.on_exception(backoff.expo,
-                      Exception,
-                      max_tries=5,
-                      on_giveup=_on_giveup,
-                      factor=2)
+@backoff.on_exception(
+    backoff.expo, Exception, max_tries=5, on_giveup=_on_giveup, factor=2
+)
 def _upload(obj, body):
     obj.put(Body=body.encode())
 
