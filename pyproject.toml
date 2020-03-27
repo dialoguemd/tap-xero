@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "dia-tap-xero"
+version = "0.0.0"
+description = "Dialogue's version of Tap Xero"
+authors = ["Dialogue <hackers@dialogue.co>"]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+requests = "^2.22"
+boto3 = "^1.10"
+pyxero = "0.9.1"
+funcy = "^1.12"
+singer-python = "5.5.1"
+
+[tool.poetry.dev-dependencies]
+pylama = "^7.7"
+isort = "^4.3"
+black = "19.3b0"
+pytest = "^5.3"
+pytest-cov = "^2.7"
+
+[[tool.poetry.source]]
+name = "dialogue"
+url = "https://pypi.fury.io/dialogue"
+
+[tool.black]
+exclude = '.vscode|.eggs|.venv'
+
+[tool.poetry.scripts]
+dia-tap-xero = "dia_tap_xero:main"
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"

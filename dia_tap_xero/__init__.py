@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
-import os
-import singer
 import json
+import os
+
+import singer
 from singer import metadata, metrics, utils
-from singer.catalog import Catalog
 from singer.catalog import Catalog, CatalogEntry, Schema
 from xero.exceptions import XeroUnauthorized
-from . import streams as streams_
-from . import credentials
-from .http import XeroClient
-from .context import Context
 
-CREDENTIALS_KEYS = ["consumer_key", "client_secret"]
-REQUIRED_CONFIG_KEYS = ["start_date"] + CREDENTIALS_KEYS
+import credentials
+import streams as streams_
+from client import XeroClient
+from context import Context
+
+REQUIRED_CONFIG_KEYS = [
+    "client_id",
+    "client_secret",
+    "start_date",
+    "tenant_id",
+    "refresh_token",
+]
 
 LOGGER = singer.get_logger()
 
@@ -74,42 +80,8 @@ def ensure_credentials_are_valid(config):
     XeroClient(config).filter("currencies")
 
 
-def init_credentials(config):
-    ## Because of Xero's auth implementation, there can be two sources of truth
-    ## The credentials in S3, if this tap run continues a token chain
-    ## Or the credentials in the config if the credentials have been refreshed elsewhere
-    ## This function will establish working credentials and save them to S3
-    ## For the remainder of the tap run, S3 will be the source of truth
-    if credentials.can_use_s3(config):
-        ## Test the credentials in the config first, they may have been refreshed
-        ## outside of the tap
-        try:
-            LOGGER.info("Attempting refresh with config credentials.")
-            refresh_results = credentials.refresh(config)
-            config.update(refresh_results)
-            ensure_credentials_are_valid(config)
-        except XeroUnauthorized as e:
-            ## Now attempt with S3 credentials
-            creds = credentials.download_from_s3(config)
-            if creds:
-                config.update(creds)
-                try:
-                    LOGGER.info(
-                        "Config credentials failed.  Attempting refresh with s3 credentials."
-                    )
-                    refresh_results = credentials.refresh(config)
-                    config.update(refresh_results)
-                    ensure_credentials_are_valid(config)
-                except XeroUnauthorized as ex:
-                    raise BadCredsException(BAD_CREDS_MESSAGE) from ex
-            else:
-                raise BadCredsException(BAD_CREDS_MESSAGE) from ex
-
-    return config
-
-
 def discover(config):
-    config = init_credentials(config)
+    # config = init_credentials(config)
     catalog = Catalog([])
     for stream in streams_.all_streams:
         schema_dict = load_schema(stream.tap_stream_id)
@@ -135,8 +107,8 @@ def load_and_write_schema(stream):
 
 
 def sync(ctx):
-    new_credentials = init_credentials(ctx.config)
-    ctx.client.update_credentials(new_credentials)
+    # new_credentials = init_credentials(ctx.config)
+    # ctx.client.update_credentials(new_credentials)
     currently_syncing = ctx.state.get("currently_syncing")
     start_idx = (
         streams_.all_stream_ids.index(currently_syncing) if currently_syncing else 0

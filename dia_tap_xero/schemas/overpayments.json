@@ -10,26 +10,26 @@
         "string"
       ]
     },
-    "ID": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "Contact": {
       "$ref": "contacts"
     },
     "Date": {
-      "format": "date-time",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "format": "date-time"
     },
     "Status": {
       "type": [
         "null",
         "string"
+      ]
+    },
+    "AppliedAmount": {
+      "type": [
+        "null",
+        "number"
       ]
     },
     "LineAmountTypes": {
@@ -51,30 +51,26 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
+    },
+    "TotalTax": {
+      "type": [
+        "null",
+        "number"
+      ]
     },
     "Total": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "UpdatedDateUTC": {
-      "format": "date-time",
       "type": [
         "null",
         "string"
-      ]
+      ],
+      "format": "date-time"
     },
     "CurrencyCode": {
       "type": [
@@ -82,7 +78,7 @@
         "string"
       ]
     },
-    "PrepaymentID": {
+    "OverpaymentID": {
       "type": [
         "string"
       ]
@@ -91,40 +87,13 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-06,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
-    },
-    "Reference": {
-      "type": [
-        "null",
-        "string"
       ]
     },
     "RemainingCredit": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
-    },
-    "AppliedAmount": {
-      "type": [
-        "null",
-        "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "Allocations": {
       "type": [
@@ -144,36 +113,37 @@
         "$ref": "payments"
       }
     },
+    "Reference": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "HasAttachments": {
       "type": [
         "null",
         "boolean"
       ]
     },
-    "TotalTax": {
-      "type": [
-        "null",
-        "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
-    },
-    "DateString": {
-      "format": "date-time",
+    "ID": {
       "type": [
         "null",
         "string"
       ]
+    },
+    "DateString": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
     }
   },
   "tap_schema_dependencies": [
-    "allocations",
     "contacts",
     "line_items",
-    "payments"
+    "payments",
+    "allocations"
   ],
   "additionalProperties": false
 }

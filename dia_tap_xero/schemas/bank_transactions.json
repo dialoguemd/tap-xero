@@ -4,12 +4,11 @@
     "object"
   ],
   "properties": {
-    "Date": {
+    "Type": {
       "type": [
         "null",
         "string"
-      ],
-      "format": "date-time"
+      ]
     },
     "Contact": {
       "$ref": "contacts"
@@ -23,10 +22,54 @@
         "$ref": "line_items"
       }
     },
-    "User": {
-      "$ref": "users"
+    "BankAccount": {
+      "$ref": "accounts"
+    },
+    "IsReconciled": {
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    "Date": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "DateString": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
     },
     "Reference": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CurrencyCode": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CurrencyRate": {
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "Url": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Status": {
       "type": [
         "null",
         "string"
@@ -42,50 +85,35 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "TotalTax": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "Total": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
-    "ReceiptID": {
+    "BankTransactionID": {
       "type": [
         "string"
       ]
     },
-    "Status": {
+    "PrepaymentID": {
       "type": [
         "null",
         "string"
       ]
     },
-    "ReceiptNumber": {
+    "OverpaymentID": {
       "type": [
         "null",
-        "integer"
+        "string"
       ]
     },
     "UpdatedDateUTC": {
@@ -101,31 +129,17 @@
         "boolean"
       ]
     },
-    "Url": {
+    "ExternalLinkProviderName": {
       "type": [
         "null",
         "string"
       ]
-    },
-    "ID": {
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "ValidationErrors": {
-      "$ref": "validation_errors"
-    },
-    "Attachments": {
-      "$ref": "attachments"
     }
   },
   "tap_schema_dependencies": [
+    "accounts",
     "contacts",
-    "line_items",
-    "users",
-    "validation_errors",
-    "attachments"
+    "line_items"
   ],
   "additionalProperties": false
 }

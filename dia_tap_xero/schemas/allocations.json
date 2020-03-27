@@ -15,12 +15,7 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "Invoice": {
       "$ref": "nested_invoice"

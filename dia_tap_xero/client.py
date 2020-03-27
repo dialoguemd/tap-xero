@@ -1,15 +1,18 @@
-import json
 import decimal
-from os.path import join
+import json
 import re
-from datetime import datetime, date, time
+import time as tm
+from datetime import date, datetime, time
+from os.path import join
+
+import pytz
 import requests
+import six
 import xero.utils
 from singer.utils import strftime
-import six
-import pytz
-from .credentials import build_oauth
 from xero.exceptions import XeroUnauthorized
+
+from credentials import build_oauth_headers
 
 BASE_URL = "https://api.xero.com/api.xro/2.0"
 
@@ -32,22 +35,21 @@ def _json_load_object_hook(_dict):
 class XeroClient(object):
     def __init__(self, config):
         self.session = requests.Session()
-        self.oauth = build_oauth(config)
+        self.oauth_headers = build_oauth_headers(config)
         self.user_agent = config.get("user_agent")
 
     def update_credentials(self, new_config):
-        self.oauth = build_oauth(new_config)
+        self.oauth = build_oauth_headers(new_config)
 
     def filter(self, tap_stream_id, *args, since=None, **params):
         xero_resource_name = tap_stream_id.title().replace("_", "")
         url = join(BASE_URL, xero_resource_name)
-        headers = {"Accept": "application/json"}
-        if self.user_agent:
-            headers["User-Agent"] = self.user_agent
-        if since:
-            headers["If-Modified-Since"] = since
+
+        # Because Xero limits to 60 calls per minute, sleep for a second before calling
+        tm.sleep(1)
+
         request = requests.Request(
-            "GET", url, auth=self.oauth, headers=headers, params=params
+            "GET", url, headers=self.oauth_headers, params=params
         )
         response = self.session.send(request.prepare())
         if response.status_code == 401:

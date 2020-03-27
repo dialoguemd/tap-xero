@@ -52,45 +52,25 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "TotalTax": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "Total": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "TotalDiscount": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "UpdatedDateUTC": {
       "format": "date-time",
@@ -109,12 +89,7 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-06,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "InvoiceID": {
       "type": [
@@ -158,13 +133,6 @@
       ],
       "format": "date-time"
     },
-    "ExpectedPaymentDateString": {
-      "format": "date-time",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "PlannedPaymentDate": {
       "type": [
         "null",
@@ -172,76 +140,23 @@
       ],
       "format": "date-time"
     },
-    "PlannedPaymentDateString": {
-      "format": "date-time",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
     "HasAttachments": {
       "type": [
         "null",
         "boolean"
       ]
     },
-    "Payments": {
-      "type": [
-        "null",
-        "array"
-      ],
-      "items": {
-        "$ref": "payments"
-      }
-    },
-    "CreditNotes": {
-      "type": [
-        "null",
-        "array"
-      ],
-      "items": {
-        "$ref": "credit_notes"
-      }
-    },
-    "Prepayments": {
-      "type": [
-        "null",
-        "array"
-      ],
-      "items": {
-        "$ref": "prepayments"
-      }
-    },
-    "Overpayments": {
-      "type": [
-        "null",
-        "array"
-      ],
-      "items": {
-        "$ref": "overpayments"
-      }
-    },
     "AmountDue": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "AmountPaid": {
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "FullyPaidOnDate": {
       "format": "date-time",
@@ -254,12 +169,7 @@
       "type": [
         "null",
         "number"
-      ],
-      "minimum": -1e+33,
-      "maximum": 1e+33,
-      "multipleOf": 1e-05,
-      "exclusiveMinimum": true,
-      "exclusiveMaximum": true
+      ]
     },
     "DueDateString": {
       "format": "date-time",
@@ -290,11 +200,7 @@
   },
   "tap_schema_dependencies": [
     "contacts",
-    "payments",
-    "prepayments",
-    "overpayments",
-    "line_items",
-    "credit_notes"
+    "line_items"
   ],
   "additionalProperties": false
 }

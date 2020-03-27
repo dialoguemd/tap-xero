@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
+import json
+
 from xero.auth import PartnerCredentials
 from xero.exceptions import XeroUnauthorized
-import json
 
 with open("config.json") as f:
     config = json.loads(f.read())

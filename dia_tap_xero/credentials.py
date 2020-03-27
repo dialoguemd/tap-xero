@@ -1,12 +1,14 @@
-import boto3
+import base64
 import json
-import backoff
-import singer
-from botocore.exceptions import ClientError as BotoClientError
-from requests_oauthlib import OAuth1
-from oauthlib.oauth1 import SIGNATURE_RSA, SIGNATURE_TYPE_AUTH_HEADER
 from pathlib import Path
 
+import backoff
+import boto3
+import requests
+import singer
+from botocore.exceptions import ClientError as BotoClientError
+from oauthlib.oauth1 import SIGNATURE_RSA, SIGNATURE_TYPE_AUTH_HEADER
+from requests_oauthlib import OAuth1
 from xero.auth import PartnerCredentials
 
 LOGGER = singer.get_logger()
@@ -48,18 +50,16 @@ def download_from_s3(config):
     return body
 
 
-def build_oauth(config):
-    with open(str(Path.home()) + "/.ssh/privatekey.pem") as keyfile:
-        rsa_key = keyfile.read()
+def build_oauth_headers(config):
+    config = refresh_tokens(config)
 
-    return OAuth1(
-        config["consumer_key"],
-        client_secret=config["client_secret"],
-        resource_owner_key=config["consumer_key"],
-        rsa_key=rsa_key,
-        signature_method=SIGNATURE_RSA,
-        signature_type=SIGNATURE_TYPE_AUTH_HEADER,
-    )
+    oauth_headers = {
+        "Authorization": "Bearer " + config["access_token"],
+        "Xero-tenant-id": config["tenant_id"],
+        "Accept": "application/json",
+    }
+
+    return oauth_headers
 
 
 def _on_giveup(details):
@@ -80,6 +80,38 @@ def _upload(obj, body):
 def _write_to_s3(config):
     creds = {x: config[x] for x in REFRESHABLE_KEYS}
     _upload(_s3_obj(config), json.dumps(creds))
+
+
+def rotate_refresh_tokens(config, json_response):
+
+    config["refresh_token"] = json_response["refresh_token"]
+    config["access_token"] = json_response["access_token"]
+
+    # Rotate token on AWS
+    # TODO add functionality to rotate the token here
+
+    return config
+
+
+def refresh_tokens(config):
+    token_refresh_url = "https://identity.xero.com/connect/token"
+    b64_id_secret = base64.b64encode(
+        bytes(config["client_id"] + ":" + config["client_secret"], "utf-8")
+    ).decode("utf-8")
+    response = requests.post(
+        token_refresh_url,
+        headers={
+            "Authorization": "Basic " + b64_id_secret,
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        data={"grant_type": "refresh_token", "refresh_token": config["refresh_token"]},
+    )
+    json_response = response.json()
+
+    config = rotate_refresh_tokens(config, json_response)
+
+    LOGGER.info("Credentials refreshed, new tokens saved to config")
+    return config
 
 
 def refresh(config):

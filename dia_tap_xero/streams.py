@@ -1,11 +1,12 @@
-from requests.exceptions import HTTPError
-import singer
-from singer import metadata, metrics, Transformer
-from singer.utils import strftime, strptime_with_tz
 import backoff
+import singer
+from requests.exceptions import HTTPError
+from singer import Transformer, metadata, metrics
+from singer.utils import strftime, strptime_with_tz
 from xero.exceptions import XeroUnauthorized
-from . import credentials
-from . import transform
+
+import credentials
+import transform
 
 LOGGER = singer.get_logger()
 FULL_PAGE_SIZE = 100
