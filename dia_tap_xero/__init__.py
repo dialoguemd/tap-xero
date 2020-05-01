@@ -12,13 +12,7 @@ import streams as streams_
 from client import XeroClient
 from context import Context
 
-REQUIRED_CONFIG_KEYS = [
-    "client_id",
-    "client_secret",
-    "start_date",
-    "tenant_id",
-    "refresh_token",
-]
+REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "start_date", "tenant_id"]
 
 LOGGER = singer.get_logger()
 

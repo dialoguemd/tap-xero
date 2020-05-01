@@ -1,8 +1,7 @@
 # dia-tap-xero
 
-This is a [Singer](https://singer.io) tap that produces JSON-formatted data
-following the [Singer
-spec](https://github.com/singer-io/getting-started/blob/master/SPEC.md).
+This is Dialogue's [Singer](https://singer.io) tap that produces JSON-formatted data from Xero
+following the [Singer spec](https://github.com/singer-io/getting-started/blob/master/SPEC.md).
 
 This tap:
 
@@ -64,5 +63,17 @@ This tap:
 5.1) Run `python dia_tap_xero/__init__.py -c config.json -p properties.json | target-postgres -c config_postgres.json` to run this tap to a table in a postgres DB. Ensure that singer-target-postgres is installed to do this and ensure that as to its spec, your config_postgres.json is properly configured.
 
 
-#### NOTE:
-Xero has an API limit of 5000 calls per day and 60 calls per second. We have not hit the daily threshold yet, but do keep it in mind.
+## Authentication
+
+Xero's new [Oauth2 Authentication flow](https://developer.xero.com/documentation/oauth2/auth-flow) requires in-browser authentication to first produce a refresh and an access token, followed by a chaining of those tokens to keep them valid.
+
+Access tokens have a Time To Live (TTL) of 30 minutes. Refresh tokens have a TTL of 30 days. Thus, to keep the chain valid, the refresh token must be used at least once every 30 days.
+
+### Starting the Chain of Tokens
+1. Ensure you are in the appropriate AWS region (`ca-central-1` for dev, or `us-east-1` for prod)
+2. Launch Jupyter Notebooks and open `get_initial_xero_tokens.ipynb`
+3. Fill in the credentials for this account (which can be found in 1Password)
+4. Run the first cell to define the function
+5. Run the second cell and log in to Xero and accept the authorizaiton
+6. Copy the URL once redirected back to dialogue.co into the textbox in the notebook and submit
+7. The function will then return the new tokens and write the refresh token to AWS SSM Parameter Store. Now when you go to run the tap, via Airflow or the CLI, it will call to AWS to fetch this key from SSM Parameter Store. 
