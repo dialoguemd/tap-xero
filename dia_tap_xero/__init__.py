@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import os
 
@@ -21,6 +22,8 @@ REQUIRED_CONFIG_KEYS = [
 
 LOGGER = singer.get_logger()
 
+env = os.environ.copy()
+
 BAD_CREDS_MESSAGE = (
     "Failed to refresh OAuth token using the credentials from both the config and S3. "
     "The token might need to be reauthorized from the integration's properties "
@@ -35,6 +38,37 @@ class BadCredsException(Exception):
 
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-p", "--properties", help="Catalog file with fields selected")
+    parser.add_argument("-c", "--config", help="Optional config file")
+    parser.add_argument("-s", "--state", help="State file")
+    parser.add_argument(
+        "-d",
+        "--discover",
+        help="Build a catalog from the underlying schema",
+        action="store_true",
+    )
+
+    args = parser.parse_args()
+
+    return args
+
+
+def load_file(filename):
+    file = {}
+
+    try:
+        with open(filename) as handle:
+            file = json.load(handle)
+    except Exception:
+        LOGGER.fatal("Failed to decode config file. Is it valid json?")
+        raise RuntimeError
+
+    return file
 
 
 def load_schema(tap_stream_id):
@@ -127,17 +161,33 @@ def sync(ctx):
 
 
 def main_impl():
-    args = utils.parse_args(REQUIRED_CONFIG_KEYS)
+    args = get_args()
+
+    if args.config:
+        LOGGER.info("Config json found")
+        config = load_file(args.config)
+    elif "xero_config" in env:
+        LOGGER.info("Env var config found")
+        config = json.loads(env["xero_config"])
+    else:
+        critical("No config found, aborting")
+        return
+
+    if args.properties:
+        LOGGER.info("Catalog found")
+        args.properties = load_file(args.properties)
+        catalog = Catalog.from_dict(args.properties) if args.properties else discover()
+
+    if args.state:
+        state = args.state
+    else:
+        state = {}
+
     if args.discover:
-        discover(args.config).dump()
+        discover().dump()
         print()
     else:
-        catalog = (
-            Catalog.from_dict(args.properties)
-            if args.properties
-            else discover(args.config)
-        )
-        sync(Context(args.config, args.state, catalog))
+        sync(Context(config, state, catalog))
 
 
 def main():
