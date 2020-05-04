@@ -7,10 +7,10 @@ from singer import metadata, metrics, utils
 from singer.catalog import Catalog, CatalogEntry, Schema
 from xero.exceptions import XeroUnauthorized
 
-import credentials
-import streams as streams_
-from client import XeroClient
-from context import Context
+import dia_tap_xero.credentials
+import dia_tap_xero.streams as streams_
+from dia_tap_xero.client import XeroClient
+from dia_tap_xero.context import Context
 
 REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "start_date", "tenant_id"]
 

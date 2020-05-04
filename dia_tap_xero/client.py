@@ -12,7 +12,7 @@ import xero.utils
 from singer.utils import strftime
 from xero.exceptions import XeroUnauthorized
 
-from credentials import build_oauth_headers
+from dia_tap_xero.credentials import build_oauth_headers
 
 BASE_URL = "https://api.xero.com/api.xro/2.0"
 

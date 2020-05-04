@@ -1,7 +1,7 @@
 import singer
 from singer import bookmarks as bks_
 
-from client import XeroClient
+from dia_tap_xero.client import XeroClient
 
 
 class Context(object):
