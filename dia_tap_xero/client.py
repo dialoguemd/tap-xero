@@ -12,7 +12,7 @@ import xero.utils
 from singer.utils import strftime
 from xero.exceptions import XeroUnauthorized
 
-from dia_tap_xero.credentials import build_oauth_headers
+from dia_tap_xero.credentials import XeroCredentials
 
 BASE_URL = "https://api.xero.com/api.xro/2.0"
 
@@ -35,11 +35,11 @@ def _json_load_object_hook(_dict):
 class XeroClient(object):
     def __init__(self, config):
         self.session = requests.Session()
-        self.oauth_headers = build_oauth_headers(config)
+        self.oauth_headers = XeroCredentials(config).build_oauth_headers()
         self.user_agent = config.get("user_agent")
 
     def update_credentials(self, new_config):
-        self.oauth = build_oauth_headers(new_config)
+        self.oauth = XeroCredentials(new_config).build_oauth_headers()
 
     def filter(self, tap_stream_id, *args, since=None, **params):
         xero_resource_name = tap_stream_id.title().replace("_", "")

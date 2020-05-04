@@ -5,8 +5,7 @@ from singer import Transformer, metadata, metrics
 from singer.utils import strftime, strptime_with_tz
 from xero.exceptions import XeroUnauthorized
 
-import dia_tap_xero.credentials
-import dia_tap_xero.transform
+from dia_tap_xero import credentials, transform
 
 LOGGER = singer.get_logger()
 FULL_PAGE_SIZE = 100

@@ -7,12 +7,17 @@ from singer import metadata, metrics, utils
 from singer.catalog import Catalog, CatalogEntry, Schema
 from xero.exceptions import XeroUnauthorized
 
-import dia_tap_xero.credentials
 import dia_tap_xero.streams as streams_
 from dia_tap_xero.client import XeroClient
 from dia_tap_xero.context import Context
 
-REQUIRED_CONFIG_KEYS = ["client_id", "client_secret", "start_date", "tenant_id"]
+REQUIRED_CONFIG_KEYS = [
+    "client_id",
+    "client_secret",
+    "start_date",
+    "tenant_id",
+    "region_name",
+]
 
 LOGGER = singer.get_logger()
 
@@ -75,7 +80,6 @@ def ensure_credentials_are_valid(config):
 
 
 def discover(config):
-    # config = init_credentials(config)
     catalog = Catalog([])
     for stream in streams_.all_streams:
         schema_dict = load_schema(stream.tap_stream_id)
@@ -101,8 +105,6 @@ def load_and_write_schema(stream):
 
 
 def sync(ctx):
-    # new_credentials = init_credentials(ctx.config)
-    # ctx.client.update_credentials(new_credentials)
     currently_syncing = ctx.state.get("currently_syncing")
     start_idx = (
         streams_.all_stream_ids.index(currently_syncing) if currently_syncing else 0
