@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dia-tap-xero"
-version = "0.0.1"
+version = "0.1.0"
 description = "Dialogue's version of Tap Xero"
 authors = ["Dialogue <hackers@dialogue.co>"]
 
